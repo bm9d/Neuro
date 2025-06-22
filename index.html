@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>neurosub</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter & Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body class="antialiased">
+
+    <!-- Header Bar (initially transparent) -->
+    <header id="header-bar" class="fixed top-0 left-0 w-full px-6 md:px-12 py-4 flex justify-between items-center z-40 transition-opacity duration-500 opacity-0">
+        <!-- Background element -->
+        <div class="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-500" id="header-bg" style="background-color: var(--header-bg);"></div>
+        <!-- Content on top of the background -->
+        <div class="w-full flex justify-end items-center relative gap-4">
+            <button id="theme-toggle" class="p-2 rounded-full text-gray-300 dark:text-gray-400 hover:bg-gray-700/50 dark:hover:bg-gray-600 transition-colors" title="Toggle theme">
+                <!-- Icon will be inserted by JS -->
+            </button>
+            <a href="https://t.me/neurosub1" target="_blank" class="hidden md:inline-block bg-cyan-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-cyan-600 transition-colors" data-translate="contact_us">Contact Us</a>
+        </div>
+    </header>
+
+    <!-- Scrolling Logo & Name Container -->
+    <div id="scrolling-header-content" class="fixed z-50 flex flex-col justify-center space-y-4 transition-all duration-500 ease-in-out top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="will-change: transform, top, left, right;">
+        <div class="flex items-center space-x-4 rtl:space-x-reverse mx-auto">
+            <!-- Logo is now circular -->
+            <img src="images/logo.jpeg" alt="neurosub Logo" id="scrolling-logo" class="w-24 h-24 md:w-32 md:h-32 object-cover rounded-full transition-all duration-500 ease-in-out">
+            <span id="scrolling-name" class="text-4xl md:text-6xl font-bold motion-light-text transition-all duration-500 ease-in-out">neurosub</span>
+        </div>
+        <!-- Language Selector with Animated Border -->
+        <div id="language-selector-container" class="animated-border-container transition-all duration-500 ease-in-out w-52 mx-auto">
+            <div class="lang-selector relative z-10 grid grid-cols-2 rounded-full p-1">
+                <button data-lang="ar" class="px-4 py-1 text-sm font-semibold rounded-full">العربية</button>
+                <button data-lang="en" class="px-4 py-1 text-sm font-semibold rounded-full active">English</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scroll Down Prompt -->
+    <div id="scroll-prompt" class="fixed left-1/2 -translate-x-1/2 z-50 text-center transition-opacity duration-500 ease-in-out">
+        <span class="motion-light-text text-sm font-semibold tracking-widest" data-translate="scroll_down">SCROLL DOWN</span>
+        <svg class="w-6 h-6 mx-auto mt-1 text-cyan-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="order-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4 modal-backdrop opacity-0"
+         role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content rounded-2xl shadow-2xl p-6 md:p-8 max-w-sm w-full text-center transform scale-95 opacity-0 border">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-cyan-500/20 flex items-center justify-center border-2 border-cyan-500">
+                <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 id="modal-title" class="text-xl font-bold mb-2" data-translate="modal_title">Redirecting to Telegram</h3>
+            <p class="mb-6" data-translate="modal_text">You will be redirected to our Telegram account to complete your order. Press 'Proceed' to continue.</p>
+            <div class="flex justify-center gap-4">
+                <button id="modal-cancel-btn" class="px-6 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 text-white font-semibold transition-colors" data-translate="modal_cancel">Cancel</button>
+                <a id="modal-proceed-btn" href="#" target="_blank" class="px-6 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-bold transition-colors neon-highlight" data-translate="modal_proceed">Proceed</a>
+            </div>
+        </div>
+    </div>
+
+
+    <main>
+        <!-- Intro Spacer Section -->
+        <div class="h-screen"></div>
+
+        <!-- Hero Section -->
+        <section id="hero-section" class="text-center py-20 md:py-32 px-4">
+            <div>
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight" data-translate="hero_title" style="color: var(--text-primary);">
+                    Your Gateway to Premium Digital Subscriptions
+                </h1>
+                <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl" data-translate="hero_subtitle" style="color: var(--text-secondary);">
+                    We provide fast, reliable, and affordable access to the digital tools and entertainment you love. Perfect for creators, students, and professionals.
+                </p>
+                <a href="#products" class="smooth-scroll mt-8 inline-block bg-cyan-500 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-cyan-600 transition-all duration-300 transform hover:scale-105 neon-highlight" data-translate="browse_products">
+                    Browse Products
+                </a>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="py-16 md:py-24" style="background-color: var(--bg-secondary-translucent);">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-8" data-translate="our_products">Our Products</h2>
+
+                <!-- Filters and Sorting Controls -->
+                <div class="flex flex-col md:flex-row gap-4 justify-center items-center mb-8 flex-wrap" id="filter-controls">
+                    <div id="category-filters" class="flex flex-wrap justify-center gap-2">
+                        <!-- Category buttons will be inserted here -->
+                    </div>
+                    <div class="w-full md:w-auto">
+                        <select id="sort-options" class="w-full md:w-auto rounded-full py-2 px-4 focus:outline-none focus:ring-2" style="background-color: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); focus-ring-color: var(--accent-primary);">
+                            <option value="default" data-translate="sort_default">Sort by...</option>
+                            <option value="price-asc" data-translate="sort_price_asc">Price: Low to High</option>
+                            <option value="price-desc" data-translate="sort_price_desc">Price: High to Low</option>
+                            <option value="name-asc" data-translate="sort_name_asc">Name: A-Z</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="w-full max-w-md mx-auto mb-12">
+                    <div class="animated-border-container">
+                        <div class="relative w-full">
+                            <input type="text" id="search-input" placeholder="Search for products..." class="relative z-10 w-full border-transparent rounded-full py-3 pl-12 pr-6 placeholder-gray-400 focus:outline-none" style="background-color: var(--bg-tertiary); color: var(--text-primary);" data-translate-placeholder="search_placeholder">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-6 z-20 pointer-events-none" style="color: var(--text-secondary);">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                </svg>
+                            </div>
+                            <button id="clear-search-btn" class="absolute inset-y-0 end-0 flex items-center pe-6 z-20 hover:text-white transition-colors hidden" style="color: var(--text-secondary);">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="error-message" class="hidden text-center text-yellow-300 max-w-4xl mx-auto mb-8 p-4 bg-yellow-900/50 border border-yellow-700 rounded-lg"></div>
+            <div id="product-grid" class="container mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6">
+                <!-- Skeletons and product cards are now generated entirely by JavaScript -->
+            </div>
+            <div id="no-results-message" class="hidden text-center mt-8 text-lg" style="color: var(--text-secondary);">
+                <p data-translate="no_products_found">No products found matching your search.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-20 md:py-32 px-4" style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding-bottom: calc(5rem + env(safe-area-inset-bottom));">
+        <div class="container mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6" data-translate="follow_us">Follow Us</h2>
+            <div class="flex justify-center space-x-8 mb-8">
+                <a href="https://t.me/neurosub1" target="_blank" class="social-icon telegram-glow">
+                    <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 24 24" aria-label="Telegram Logo"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" /></svg>
+                </a>
+                <a href="https://www.instagram.com/neurosub?igsh=MTU0aXFlZHN3MXE0YQ==" target="_blank" class="social-icon">
+                    <div class="instagram-logo-new"></div>
+                </a>
+            </div>
+            <p class="text-sm" data-translate="footer_copyright" style="color: var(--text-secondary);">&copy; 2024 neurosub. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" title="Back to top">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
+<script src="js/main.js"></script>
+</body>
+</html>
