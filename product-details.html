@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Product Details - neurosub</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter & Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Marked.js for Markdown Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        /* CSS Variables for Theming */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f4f6;
+            --bg-secondary-translucent: rgba(243, 244, 246, 0.7);
+            --bg-tertiary: #e5e7eb;
+            --bg-modal: #ffffff;
+            --border-color: #d1d5db;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-on-accent: #ffffff;
+            --accent-primary: #0891b2;
+            --accent-primary-glow: #0ea5e9;
+            --accent-hover: #06b6d4;
+            --accent-secondary-color: #a855f7;
+            --accent-secondary-glow: #c084fc;
+            --header-bg: rgba(255, 255, 255, 0.5);
+            --motion-text-from: #111827;
+            --motion-text-via: #0ea5e9;
+            --motion-text-to: #111827;
+        }
+
+        html.dark {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #0a0a0a;
+            --bg-secondary-translucent: rgba(31, 41, 55, 0.5);
+            --bg-tertiary: #374151;
+            --bg-modal: #1f2937;
+            --border-color: #4b5563;
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --text-on-accent: #ffffff;
+            --accent-primary: #0ea5e9;
+            --accent-primary-glow: #0ea5e9;
+            --accent-hover: #38bdf8;
+            --accent-secondary-color: #c084fc;
+            --accent-secondary-glow: #a855f7;
+            --header-bg: rgba(10, 10, 10, 0.3);
+            --motion-text-from: #e5e7eb;
+            --motion-text-via: #0ea5e9;
+            --motion-text-to: #e5e7eb;
+        }
+        
+        /* Base Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        html[lang="ar"] body {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* --- LOGO & HEADER STYLING --- */
+        .motion-light-text {
+            background: linear-gradient(90deg, var(--motion-text-from), var(--motion-text-via), var(--motion-text-to));
+            background-size: 200% auto;
+            color: #fff;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-motion 4s linear infinite;
+        }
+
+        @keyframes gradient-motion {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+
+        html[lang="ar"] .logo-container {
+            flex-direction: row-reverse;
+        }
+
+        .header-back-btn {
+            background-color: var(--accent-primary);
+            color: var(--text-on-accent);
+        }
+        .header-back-btn:hover {
+            background-color: var(--accent-hover);
+        }
+        
+        /* --- LANGUAGE SELECTOR --- */
+        #lang-selector {
+            background-color: var(--bg-tertiary);
+        }
+        #lang-selector button {
+            transition: background-color 0.2s, color 0.2s;
+            color: var(--text-secondary);
+        }
+        #lang-selector button.active {
+            background-color: var(--accent-primary);
+            color: var(--text-on-accent);
+            box-shadow: 0 0 8px var(--accent-primary-glow);
+        }
+
+        /* Product Details Specific Styles */
+        .neon-highlight {
+             box-shadow: 0 0 5px var(--accent-primary-glow), 0 0 10px var(--accent-primary-glow), 0 0 15px var(--accent-primary-glow);
+        }
+
+        .product-option input[type="radio"]:checked + .option-label {
+            border-color: var(--accent-primary);
+            background-color: var(--accent-primary-glow);
+            box-shadow: 0 0 10px var(--accent-primary-glow);
+        }
+        html:not(.dark) .product-option input[type="radio"]:checked + .option-label {
+             background-color: var(--accent-primary);
+        }
+        .product-option:nth-child(2) input[type="radio"]:checked + .option-label {
+            border-color: var(--accent-secondary-color);
+            background-color: var(--accent-secondary-glow);
+            box-shadow: 0 0 10px var(--accent-secondary-glow);
+        }
+        html:not(.dark) .product-option:nth-child(2) input[type="radio"]:checked + .option-label {
+             background-color: var(--accent-secondary-color);
+        }
+        
+        .product-options-container { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+        .product-option { display: block; position: relative; }
+        .product-option input[type="radio"] { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer; }
+        .product-option .option-label { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-radius: 0.5rem; border: 2px solid var(--border-color); background-color: var(--bg-tertiary); transition: all 0.2s ease-in-out; font-weight: 600; }
+        .product-option .option-label .option-name { color: var(--text-primary); }
+        .product-option .option-label .option-price { color: var(--accent-primary); }
+        .product-option input[type="radio"]:hover:not(:checked) + .option-label { border-color: var(--accent-hover); }
+        .product-option input[type="radio"]:checked + .option-label .option-name,
+        .product-option input[type="radio"]:checked + .option-label .option-price { color: var(--text-on-accent); }
+        
+        .order-button:hover { background-color: var(--accent-hover); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+
+        /* --- STYLES FOR RENDERED MARKDOWN --- */
+        .markdown-content > *:first-child { margin-top: 0; }
+        .markdown-content > *:last-child { margin-bottom: 0; }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        .markdown-content h1 { font-size: 1.5em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+        .markdown-content h2 { font-size: 1.25em; }
+        .markdown-content h3 { font-size: 1.125em; }
+        .markdown-content p { color: var(--text-secondary); line-height: 1.65; margin-bottom: 1rem; }
+        .markdown-content ul, .markdown-content ol { color: var(--text-secondary); padding-left: 1.75rem; margin-bottom: 1rem; }
+        .markdown-content li { margin-bottom: 0.5rem; }
+        .markdown-content ul li { list-style-type: disc; }
+        .markdown-content ol li { list-style-type: decimal; }
+        .markdown-content a { color: var(--accent-primary); text-decoration: none; font-weight: 500; transition: color 0.2s ease, text-decoration-color 0.2s ease; text-decoration-line: underline; text-decoration-color: transparent; text-underline-offset: 3px; }
+        .markdown-content a:hover { color: var(--accent-hover); text-decoration-color: var(--accent-hover); }
+        .markdown-content blockquote { border-left: 4px solid var(--accent-primary); padding: 0.5rem 1rem; margin: 1.5rem 0; background-color: var(--bg-secondary); border-radius: 0 0.5rem 0.5rem 0; }
+        .markdown-content blockquote p { color: var(--text-secondary); margin: 0; font-style: italic; }
+        html.dark .markdown-content p, html.dark .markdown-content ul, html.dark .markdown-content ol, html.dark .markdown-content blockquote p { color: var(--text-primary); }
+        .markdown-content pre { background-color: var(--bg-tertiary); color: var(--text-primary); padding: 1rem; border-radius: 0.5rem; overflow-x: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.9em; margin: 1.5rem 0; }
+        .markdown-content code { background-color: var(--bg-tertiary); color: var(--accent-secondary-color); padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.9em; }
+        .markdown-content pre code { padding: 0; background-color: transparent; color: inherit; }
+        .markdown-content hr { border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0; }
+        .markdown-content table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; box-shadow: 0 0 0 1px var(--border-color); border-radius: 0.5rem; overflow: hidden; }
+        .markdown-content th, .markdown-content td { border: 1px solid var(--border-color); padding: 0.75rem 1rem; text-align: left; }
+        .markdown-content th { background-color: var(--bg-secondary); color: var(--text-primary); font-weight: 600; }
+        .markdown-content tr:nth-child(even) { background-color: var(--bg-secondary-translucent); }
+        html.dark .markdown-content tr:nth-child(even) { background-color: var(--bg-secondary); }
+
+        /* --- FOOTER & SOCIAL ICONS STYLES --- */
+        .social-icon { transition: transform 0.3s ease; }
+        .social-icon:hover { transform: scale(1.1); }
+        .telegram-glow { animation: telegram-pulse 2s infinite alternate; }
+        @keyframes telegram-pulse {
+            from { color: #2AABEE; filter: drop-shadow(0 0 4px #2AABEE); }
+            to { color: #87cefa; filter: drop-shadow(0 0 10px #2AABEE) drop-shadow(0 0 2px #fff); }
+        }
+        .instagram-logo-new { position: relative; width: 4rem; height: 4rem; }
+        .instagram-logo-new, .instagram-logo-new::before, .instagram-logo-new::after { --insta-color: #a855f7; }
+        .instagram-logo-new { border: 6px solid var(--insta-color); border-radius: 18px; background-color: transparent; box-shadow: 0 0 10px var(--insta-color), 0 0 20px var(--insta-color), inset 0 0 5px var(--insta-color); }
+        .instagram-logo-new::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 30px; height: 30px; border: 6px solid var(--insta-color); border-radius: 50%; background-color: transparent; box-shadow: 0 0 10px var(--insta-color); }
+        .instagram-logo-new::after { content: ''; position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background-color: var(--insta-color); box-shadow: 0 0 10px var(--insta-color); }
+        
+        /* --- MODAL STYLES --- */
+        .modal-backdrop { transition: opacity 0.3s ease; }
+        .modal-content { transition: transform 0.3s ease, opacity 0.3s ease; background-color: var(--bg-modal); border-color: var(--border-color); }
+        
+        /* --- BACK TO TOP BUTTON --- */
+        #back-to-top {
+            position: fixed;
+            right: 2rem;
+            bottom: calc(2rem + env(safe-area-inset-bottom));
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 45;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            background-color: var(--accent-primary);
+            color: var(--text-on-accent);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0;
+            transform: translateY(100px);
+        }
+        #back-to-top.visible { opacity: 1; transform: translateY(0); }
+        html[dir="rtl"] #back-to-top { right: auto; left: 2rem; }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="p-4 border-b sticky top-0 z-40" style="border-color: var(--border-color); background-color: var(--header-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                 <a href="index.html" class="logo-container flex items-center text-xl md:text-2xl font-bold">
+                     <span class="motion-light-text">neurosub</span>
+                 </a>
+            </div>
+            <div class="flex items-center gap-4">
+                <div id="lang-selector" class="flex p-1 rounded-full">
+                    <button data-lang="ar" class="px-3 py-1 text-sm font-semibold rounded-full">AR</button>
+                    <button data-lang="en" class="px-3 py-1 text-sm font-semibold rounded-full">EN</button>
+                </div>
+                <!-- Back Button -->
+                <a href="index.html" class="header-back-btn px-4 py-2 rounded-lg text-sm font-semibold transition-colors" data-translate="back_button_text">Back</a>
+            </div>
+        </div>
+    </header>
+
+    <main id="product-details-container" class="container mx-auto p-4 md:p-8 opacity-0">
+        <!-- Product content will be injected here -->
+        <!-- Skeleton Loader -->
+        <div id="skeleton-loader" class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 animate-pulse">
+            <div>
+                <div class="h-10 rounded-lg w-3/4 mb-4" style="background-color: var(--bg-tertiary);"></div>
+                <div class="h-6 rounded-lg w-1/2 mb-8" style="background-color: var(--bg-tertiary);"></div>
+                <div class="h-4 rounded-lg w-full mb-3" style="background-color: var(--bg-tertiary);"></div>
+                <div class="h-4 rounded-lg w-full mb-3" style="background-color: var(--bg-tertiary);"></div>
+                <div class="h-4 rounded-lg w-5/6 mb-8" style="background-color: var(--bg-tertiary);"></div>
+                <div class="h-12 rounded-lg mt-4 w-full" style="background-color: var(--accent-primary-glow); opacity: 0.5;"></div>
+            </div>
+             <div class="rounded-2xl aspect-square w-full" style="background-color: var(--bg-tertiary);"></div>
+        </div>
+    </main>
+
+    <div id="not-found" class="hidden text-center p-16">
+        <h1 class="text-4xl font-bold" data-translate="product_not_found_title">Product Not Found</h1>
+        <p class="mt-4 text-lg" style="color: var(--text-secondary);" data-translate="product_not_found_text">
+            Sorry, we couldn't find the product you're looking for.
+        </p>
+        <a href="index.html" class="mt-8 inline-block bg-cyan-500 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-cyan-600 transition-all duration-300 transform hover:scale-105 neon-highlight" data-translate="back_to_products">
+            Back to Products
+        </a>
+    </div>
+    
+    <!-- Order Confirmation Modal -->
+    <div id="order-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4 modal-backdrop opacity-0" 
+         role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content rounded-2xl shadow-2xl p-6 md:p-8 max-w-sm w-full text-center transform scale-95 opacity-0 border">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-cyan-500/20 flex items-center justify-center border-2 border-cyan-500">
+                <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 id="modal-title" class="text-xl font-bold mb-2" data-translate="modal_title">Redirecting to Telegram</h3>
+            <p class="mb-6" data-translate="modal_text">You will be redirected to our Telegram account to complete your order. Press 'Proceed' to continue.</p>
+            <div class="flex justify-center gap-4">
+                <button id="modal-cancel-btn" class="px-6 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 text-white font-semibold transition-colors" data-translate="modal_cancel">Cancel</button>
+                <a id="modal-proceed-btn" href="#" target="_blank" class="px-6 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-bold transition-colors neon-highlight" data-translate="modal_proceed">Proceed</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-20 md:py-24 px-4" style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding-bottom: calc(5rem + env(safe-area-inset-bottom));">
+        <div class="container mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6" data-translate="follow_us">Follow Us</h2>
+            <div class="flex justify-center space-x-8 mb-8">
+                <a href="https://t.me/neurosub1" target="_blank" class="social-icon telegram-glow">
+                    <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 24 24" aria-label="Telegram Logo"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" /></svg>
+                </a>
+                <a href="https://www.instagram.com/neurosub?igsh=MTU0aXFlZHN3MXE0YQ==" target="_blank" class="social-icon">
+                    <div class="instagram-logo-new"></div>
+                </a>
+            </div>
+            <p class="text-sm" data-translate="footer_copyright" style="color: var(--text-secondary);">&copy; 2024 neurosub. All Rights Reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- Back to Top Button -->
+    <button id="back-to-top" title="Back to top">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const productDetailsApp = (() => {
+        // --- CONFIG & STATE ---
+        const DATA_FILE_PATH = 'data/data.json';
+        let state = { currentLang: 'en', theme: 'dark', isModalOpen: false, currentProduct: null };
+        
+        // --- DOM ELEMENTS ---
+        const dom = {
+            html: document.documentElement,
+            detailsContainer: document.getElementById('product-details-container'),
+            notFoundContainer: document.getElementById('not-found'),
+            skeletonLoader: document.getElementById('skeleton-loader'),
+            orderModal: document.getElementById('order-modal'),
+            modalContent: document.querySelector('#order-modal .modal-content'),
+            modalCancelBtn: document.getElementById('modal-cancel-btn'),
+            modalProceedBtn: document.getElementById('modal-proceed-btn'),
+            backToTopBtn: document.getElementById('back-to-top'),
+            langSelector: document.getElementById('lang-selector'),
+        };
+        
+        // --- TRANSLATIONS ---
+        const translations = {
+            en: { contact_us: "Contact Us", order_now: "Order on Telegram", modal_title: "Redirecting to Telegram", modal_text: "You will be redirected to our Telegram account to complete your order. Press 'Proceed' to continue.", modal_cancel: "Cancel", modal_proceed: "Proceed", product_not_found_title: "Product Not Found", product_not_found_text: "Sorry, we couldn't find the product you're looking for.", back_to_products: "Back to Products", out_of_stock: "Out of Stock", details: "Details", footer_copyright: "&copy; 2024 neurosub. All Rights Reserved.", follow_us: "Follow Us", back_button_text: "Back" },
+            ar: { contact_us: "تواصل معنا", order_now: "اطلب عبر تيليجرام", modal_title: "التوجيه إلى تيليجرام", modal_text: "سيتم توجيهك إلى حسابنا على تيليجرام لإكمال طلبك. اضغط على 'متابعة' للاستمرار.", modal_cancel: "إلغاء", modal_proceed: "متابعة", product_not_found_title: "المنتج غير موجود", product_not_found_text: "عذراً، لم نتمكن من العثور على المنتج الذي تبحث عنه.", back_to_products: "العودة للمنتجات", out_of_stock: "نفدت الكمية", details: "التفاصيل", footer_copyright: "&copy; 2024 نيوروسب. كل الحقوق محفوظة.", follow_us: "تابعنا", back_button_text: "رجوع" }
+        };
+
+        // --- UTILITY & THEME ---
+        const storage = {
+            get: (key, defaultValue) => localStorage.getItem(key) || defaultValue,
+            set: (key, value) => localStorage.setItem(key, value),
+        };
+        const debounce = (func, delay) => {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), delay);
+            };
+        };
+
+        const applyTheme = (theme) => {
+            state.theme = theme;
+            // Note: We don't save the theme here because this page should only reflect the theme set on index.html
+            dom.html.classList.toggle('dark', theme === 'dark');
+        };
+
+        const initTheme = () => {
+            const savedTheme = storage.get('neurosub-theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
+        };
+        
+        const setLanguage = (lang, isInitialSetup = false) => {
+            state.currentLang = lang;
+            dom.html.lang = lang;
+            dom.html.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+
+            if (dom.langSelector) {
+                dom.langSelector.querySelectorAll('button').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.lang === lang);
+                });
+            }
+            
+            if (!isInitialSetup) {
+                storage.set('neurosub-lang', lang);
+                if (state.currentProduct) {
+                    renderProductDetails(); // Re-render with new language
+                }
+            }
+        };
+        
+        // --- MODAL LOGIC ---
+        const showModal = (link) => {
+            state.isModalOpen = true;
+            dom.modalProceedBtn.href = link;
+            dom.orderModal.classList.remove('hidden');
+            dom.orderModal.style.display = 'flex';
+            setTimeout(() => {
+                dom.orderModal.classList.remove('opacity-0');
+                dom.modalContent.classList.remove('scale-95', 'opacity-0');
+            }, 10);
+        };
+        const hideModal = () => {
+            state.isModalOpen = false;
+            dom.orderModal.classList.add('opacity-0');
+            dom.modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => dom.orderModal.classList.add('hidden'), 300);
+        };
+        
+        const handleScroll = () => {
+            dom.backToTopBtn.classList.toggle('visible', window.scrollY > 300);
+        };
+
+        // --- CORE APPLICATION LOGIC ---
+        const renderProductDetails = () => {
+            if (!state.currentProduct) return;
+            const product = state.currentProduct;
+
+            dom.skeletonLoader.style.display = 'none';
+            
+            const lang = state.currentLang;
+            const isRTL = lang === 'ar';
+            const productName = product[`Name_${lang}`] || product.Name;
+            const isOutOfStock = product.Status && product.Status.toLowerCase() === 'out of stock';
+
+            const optionsHTML = product.options.map((option, index) => {
+                const optionName = isRTL ? (option.name_ar || option.name) : option.name;
+                const uniqueId = `option-${product.Name.replace(/[^a-zA-Z0-9]/g, '-')}-${index}`;
+                return `
+                    <label for="${uniqueId}" class="product-option">
+                        <input type="radio" name="product-option-details" id="${uniqueId}" value="${index}" ${index === 0 ? 'checked' : ''}>
+                        <span class="option-label">
+                            <span class="option-name">${optionName}</span>
+                            <span class="option-price">${option.price}</span>
+                        </span>
+                    </label>
+                `;
+            }).join('');
+
+            const orderButtonHTML = isOutOfStock
+                ? `<button disabled class="w-full text-lg font-bold py-3 px-6 rounded-lg mt-6 transition-colors cursor-not-allowed bg-red-500 text-white">${translations[lang].out_of_stock}</button>`
+                : `<button class="order-button w-full text-lg font-bold py-3 px-6 rounded-lg mt-6 transition-colors neon-highlight" style="background-color: var(--accent-primary); color: var(--text-on-accent);">${translations[lang].order_now}</button>`;
+
+            const detailsSectionHTML = `
+                <div class="mt-8">
+                    <div class="border-b" style="border-color: var(--border-color);">
+                        <button class="py-3 px-5 text-base font-semibold rounded-t-lg" style="color: var(--text-on-accent); background-color: var(--accent-primary); box-shadow: 0 0 10px var(--accent-primary-glow);">
+                             <span data-translate="details">${translations[lang].details}</span>
+                        </button>
+                    </div>
+                    <div class="border-x border-b rounded-b-lg p-5" style="border-color: var(--border-color);">
+                         <div data-product-description class="markdown-content"></div>
+                    </div>
+                </div>
+            `;
+            
+            const productHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 fade-in">
+                    <div class="rounded-2xl overflow-hidden border self-start md:order-last md:sticky md:top-28" style="border-color: var(--border-color);">
+                        <img src="${product.ImageURL}" alt="${productName}" class="w-full h-full aspect-square object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x600/e5e7eb/111827?text=Image';">
+                    </div>
+                    <div class="flex flex-col self-start">
+                        <h1 class="text-3xl md:text-4xl font-extrabold" style="color: var(--text-primary);">${productName}</h1>
+                        <p data-product-price class="text-2xl md:text-3xl font-bold my-4" style="color: var(--accent-primary);"></p>
+                        <div class="product-options-container">
+                            ${optionsHTML}
+                        </div>
+                        ${orderButtonHTML}
+                        ${detailsSectionHTML}
+                    </div>
+                </div>
+            `;
+
+            dom.detailsContainer.innerHTML = productHTML;
+            dom.detailsContainer.classList.add('opacity-100');
+            
+            // Post-render logic
+            const descriptionEl = dom.detailsContainer.querySelector('[data-product-description]');
+            const priceEl = dom.detailsContainer.querySelector('[data-product-price]');
+            const optionsContainer = dom.detailsContainer.querySelector('.product-options-container');
+
+            const updateOptionDetails = (index) => {
+                const selectedOption = product.options[index];
+                if (selectedOption) {
+                    const descriptionMarkdown = isRTL ? (selectedOption.info_ar || selectedOption.info) : selectedOption.info;
+                    descriptionEl.innerHTML = marked.parse(descriptionMarkdown || '');
+                    priceEl.innerHTML = selectedOption.price;
+                }
+            };
+
+            updateOptionDetails(0); // Set initial details for the first option
+
+            optionsContainer.addEventListener('change', (e) => {
+                updateOptionDetails(parseInt(e.target.value, 10));
+            });
+
+            dom.detailsContainer.querySelector('.order-button')?.addEventListener('click', () => {
+                const selectedIndex = parseInt(optionsContainer.querySelector('input:checked').value, 10);
+                const selectedOption = product.options[selectedIndex];
+                const optionName = isRTL ? (selectedOption.name_ar || selectedOption.name) : selectedOption.name;
+                const message = `I would like to order: ${productName} - ${optionName}`;
+                const telegramLink = `${product.TelegramLink || 'https://t.me/neurosub1'}?text=${encodeURIComponent(message)}`;
+                showModal(telegramLink);
+            });
+        };
+
+        const displayNotFound = () => {
+            dom.skeletonLoader.style.display = 'none';
+            dom.notFoundContainer.classList.remove('hidden');
+        };
+        
+        const processJsonData = (rawData) => {
+            if (!Array.isArray(rawData)) { console.error("Data is not an array:", rawData); return []; }
+            return rawData.map(p => ({ ...p })).filter(p => p && p.Name && p.options && p.options.length > 0);
+        };
+
+        const fetchAndFindProduct = async () => {
+            const params = new URLSearchParams(window.location.search);
+            const productId = params.get('id');
+            if (!productId) { displayNotFound(); return; }
+            
+            try {
+                const response = await fetch(DATA_FILE_PATH);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const rawJsonData = await response.json();
+                const products = processJsonData(rawJsonData);
+                state.currentProduct = products.find(p => p.Name.replace(/ /g, '-').toLowerCase() === productId);
+                
+                if (state.currentProduct) { 
+                    renderProductDetails();
+                } else { 
+                    displayNotFound();
+                }
+            } catch (error) {
+                console.error("Error fetching product data:", error);
+                displayNotFound();
+            }
+        };
+
+        const bindEvents = () => {
+            dom.modalCancelBtn.addEventListener('click', hideModal);
+            dom.orderModal.addEventListener('click', (e) => { if (e.target === dom.orderModal) hideModal(); });
+            dom.modalProceedBtn.addEventListener('click', () => setTimeout(hideModal, 200));
+            window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && state.isModalOpen) hideModal(); });
+            window.addEventListener('scroll', debounce(handleScroll, 15));
+            dom.backToTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+            if (dom.langSelector) {
+                dom.langSelector.addEventListener('click', (e) => {
+                    const btn = e.target.closest('button[data-lang]');
+                    if (btn && btn.dataset.lang !== state.currentLang) {
+                        setLanguage(btn.dataset.lang);
+                    }
+                });
+            }
+        };
+
+        const init = () => {
+            const savedLang = storage.get('neurosub-lang', 'en');
+            initTheme(); // Initialize the theme on page load
+            setLanguage(savedLang, true); // Set language initially
+            bindEvents();
+            fetchAndFindProduct();
+            handleScroll(); // Initial check
+        };
+
+        return { init };
+    })();
+
+    productDetailsApp.init();
+});
+</script>
+
+</body>
+</html>
